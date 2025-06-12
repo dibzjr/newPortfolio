@@ -24,11 +24,12 @@ jobs:
       - name: Build the app
         run: npm run build
 
-      - name: Upload via SSH
+      - name: Upload built files to Droplet
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{ secrets.DO_HOST }}
           username: ${{ secrets.DO_USERNAME }}
           key: ${{ secrets.DO_SSH_PRIVATE_KEY }}
-          source: "dist/*"
+          source: "dist"
           target: "/var/www/vueapp"
+          strip_components: 1
