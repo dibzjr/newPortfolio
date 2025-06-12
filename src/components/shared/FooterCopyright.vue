@@ -4,7 +4,7 @@ export default {
 		return {
 			copyrightDate: new Date().getFullYear(),
 			projectName: 'Vue.js & Tailwind CSS Portfolio',
-			author: 'Stoman',
+			author: 'Rogers',
 		};
 	},
 };
@@ -25,7 +25,7 @@ export default {
 			</a>
 			. Developed by
 			<a
-				href="https://stoman.me"
+				href="https://rogersmudibo.com"
 				target="__blank"
 				class="font-general-medium text-secondary-dark dark:text-secondary-light uppercase hover:underline hover:text-indigo-600 dark:hover:text-indigo-300 duration-500"
 				>{{ author }}</a
