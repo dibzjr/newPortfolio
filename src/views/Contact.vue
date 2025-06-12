@@ -23,7 +23,7 @@ export default {
 				},
 				{
 					id: 3,
-					name: '555 8888 888',
+					name: '701 456 996',
 					icon: 'phone',
 				},
 			],
