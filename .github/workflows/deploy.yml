@@ -21,8 +21,26 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build the app
+      - name: Build the Vue app
         run: npm run build
+
+      - name: Clean and deploy via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USERNAME }}
+          key: ${{ secrets.DO_SSH_PRIVATE_KEY }}
+          script: |
+            rm -rf /var/www/vueapp/*
+            mkdir -p /var/www/vueapp
+            echo '<IfModule mod_rewrite.c>
+            RewriteEngine On
+            RewriteBase /
+            RewriteRule ^index\.html$ - [L]
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteCond %{REQUEST_FILENAME} !-d
+            RewriteRule . /index.html [L]
+            </IfModule>' > /var/www/vueapp/.htaccess
 
       - name: Upload built files to Droplet
         uses: appleboy/scp-action@v0.1.4
