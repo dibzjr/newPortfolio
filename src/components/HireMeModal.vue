@@ -3,19 +3,131 @@ import feather from 'feather-icons';
 import Button from './reusable/Button.vue';
 import FormInput from './reusable/FormInput.vue';
 import FormTextarea from './reusable/FormTextarea.vue';
+
 export default {
 	props: ['showModal', 'modal', 'categories'],
 	components: { Button, FormInput, FormTextarea },
 	data() {
-		return {};
+		return {
+			formData: {
+				name: '',
+				email: '',
+				projectType: '',
+				details: ''
+			},
+			loading: false,
+			success: false,
+			error: null,
+			formErrors: {
+				name: '',
+				email: '',
+				projectType: '',
+				details: ''
+			}
+		};
+	},
+	methods: {
+		validateForm() {
+			let isValid = true;
+			this.formErrors = {
+				name: '',
+				email: '',
+				projectType: '',
+				details: ''
+			};
+
+			// Name validation
+			if (!this.formData.name.trim()) {
+				this.formErrors.name = 'Name is required';
+				isValid = false;
+			}
+
+			// Email validation
+			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			if (!this.formData.email.trim()) {
+				this.formErrors.email = 'Email is required';
+				isValid = false;
+			} else if (!emailRegex.test(this.formData.email)) {
+				this.formErrors.email = 'Please enter a valid email';
+				isValid = false;
+			}
+
+			// Project type validation
+			if (!this.formData.projectType) {
+				this.formErrors.projectType = 'Please select a project type';
+				isValid = false;
+			}
+
+			// Details validation
+			if (!this.formData.details.trim()) {
+				this.formErrors.details = 'Please provide project details';
+				isValid = false;
+			}
+
+			return isValid;
+		},
+		async handleSubmit(e) {
+			e.preventDefault();
+			
+			if (!this.validateForm()) {
+				return;
+			}
+
+			this.loading = true;
+			this.error = null;
+			this.success = false;
+
+			try {
+				const response = await fetch('https://formspree.io/f/mqabqnnr', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						name: this.formData.name,
+						email: this.formData.email,
+						projectType: this.formData.projectType,
+						details: this.formData.details
+					})
+				});
+
+				if (!response.ok) {
+					throw new Error('Failed to send message');
+				}
+
+				this.success = true;
+				this.formData = {
+					name: '',
+					email: '',
+					projectType: '',
+					details: ''
+				};
+				
+				// Close modal after 2 seconds on success
+				setTimeout(() => {
+					this.showModal();
+				}, 2000);
+			} catch (error) {
+				this.error = 'Failed to send message. Please try again.';
+				console.error('Form submission error:', error);
+			} finally {
+				this.loading = false;
+			}
+		},
+		updateFormData(field, value) {
+			this.formData[field] = value;
+			// Clear error when user starts typing
+			if (this.formErrors[field]) {
+				this.formErrors[field] = '';
+			}
+		}
 	},
 	mounted() {
 		feather.replace();
 	},
 	updated() {
 		feather.replace();
-	},
-	methods: {},
+	}
 };
 </script>
 
@@ -56,17 +168,28 @@ export default {
 								</button>
 							</div>
 							<div class="modal-body p-5 w-full h-full">
-								<form class="max-w-xl m-4 text-left">
+								<form @submit="handleSubmit" class="max-w-xl m-4 text-left">
 									<FormInput
 										label="Full Name"
 										inputIdentifier="name"
+										:val="formData.name"
+										@update:val="updateFormData('name', $event)"
 										class="mb-2"
 									/>
+									<div v-if="formErrors.name" class="text-red-500 text-sm mb-4">
+										{{ formErrors.name }}
+									</div>
+
 									<FormInput
 										label="Email"
 										inputIdentifier="email"
 										inputType="email"
+										:val="formData.email"
+										@update:val="updateFormData('email', $event)"
 									/>
+									<div v-if="formErrors.email" class="text-red-500 text-sm mb-4">
+										{{ formErrors.email }}
+									</div>
 
 									<div class="mt-6 mb-4">
 										<label
@@ -75,6 +198,8 @@ export default {
 											>Project Type</label
 										>
 										<select
+											v-model="formData.projectType"
+											@change="updateFormData('projectType', $event.target.value)"
 											class="w-full px-5 py-3 border-1 border-gray-200 dark:border-secondary-dark rounded-md text-md bg-secondary-light dark:bg-ternary-dark text-primary-dark dark:text-ternary-light"
 											id="project"
 											name="project"
@@ -82,6 +207,7 @@ export default {
 											required=""
 											aria-label="Project Category"
 										>
+											<option value="">Select a project type</option>
 											<option
 												v-for="category in categories"
 												:key="category.id"
@@ -90,18 +216,37 @@ export default {
 												{{ category.name }}
 											</option>
 										</select>
+										<div v-if="formErrors.projectType" class="text-red-500 text-sm mt-2">
+											{{ formErrors.projectType }}
+										</div>
 									</div>
 
 									<FormTextarea
 										label="Details"
 										textareaIdentifier="details"
+										:val="formData.details"
+										@update:val="updateFormData('details', $event)"
 									/>
+									<div v-if="formErrors.details" class="text-red-500 text-sm mb-4">
+										{{ formErrors.details }}
+									</div>
+
+									<!-- Success Message -->
+									<div v-if="success" class="text-green-500 mb-4">
+										Message sent successfully! We'll get back to you soon.
+									</div>
+
+									<!-- Error Message -->
+									<div v-if="error" class="text-red-500 mb-4">
+										{{ error }}
+									</div>
 
 									<div class="mt-7 pb-4 sm:pb-1">
 										<Button
-											title="Send Request"
+											:title="loading ? 'Sending...' : 'Send Request'"
 											class="px-4 sm:px-6 py-2 sm:py-2.5 text-white bg-indigo-500 hover:bg-indigo-600 rounded-md focus:ring-1 focus:ring-indigo-900 duration-500"
 											type="submit"
+											:disabled="loading"
 											aria-label="Submit Request"
 										/>
 									</div>

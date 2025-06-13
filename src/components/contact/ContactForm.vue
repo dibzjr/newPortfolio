@@ -2,7 +2,6 @@
 import Button from '../reusable/Button.vue';
 import FormInput from '../reusable/FormInput.vue';
 import FormTextarea from '../reusable/FormTextarea.vue';
-import emailjs from '@emailjs/browser';
 
 export default {
 	components: { Button, FormInput, FormTextarea },
@@ -16,30 +15,84 @@ export default {
 			},
 			loading: false,
 			success: false,
-			error: null
+			error: null,
+			formErrors: {
+				name: '',
+				email: '',
+				subject: '',
+				message: ''
+			}
 		};
 	},
 	methods: {
+		validateForm() {
+			let isValid = true;
+			this.formErrors = {
+				name: '',
+				email: '',
+				subject: '',
+				message: ''
+			};
+
+			// Name validation
+			if (!this.formData.name.trim()) {
+				this.formErrors.name = 'Name is required';
+				isValid = false;
+			}
+
+			// Email validation
+			const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+			if (!this.formData.email.trim()) {
+				this.formErrors.email = 'Email is required';
+				isValid = false;
+			} else if (!emailRegex.test(this.formData.email)) {
+				this.formErrors.email = 'Please enter a valid email';
+				isValid = false;
+			}
+
+			// Subject validation
+			if (!this.formData.subject.trim()) {
+				this.formErrors.subject = 'Subject is required';
+				isValid = false;
+			}
+
+			// Message validation
+			if (!this.formData.message.trim()) {
+				this.formErrors.message = 'Message is required';
+				isValid = false;
+			}
+
+			return isValid;
+		},
 		async handleSubmit(e) {
 			e.preventDefault();
+			
+			if (!this.validateForm()) {
+				return;
+			}
+
 			this.loading = true;
 			this.error = null;
 			this.success = false;
 
 			try {
-				await emailjs.send(
-					'YOUR_SERVICE_ID', // Replace with your EmailJS service ID
-					'YOUR_TEMPLATE_ID', // Replace with your EmailJS template ID
-					{
-						from_name: this.formData.name,
-						from_email: this.formData.email,
-						subject: this.formData.subject,
-						message: this.formData.message,
-						to_email: 'mudiborogers@gmail.com'
+				const response = await fetch('https://formspree.io/f/mqabqnnr', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
 					},
-					'YOUR_PUBLIC_KEY' // Replace with your EmailJS public key
-				);
-				
+					body: JSON.stringify({
+						name: this.formData.name,
+						email: this.formData.email,
+						subject: this.formData.subject,
+						message: this.formData.message
+					})
+				});
+
+				if (!response.ok) {
+					throw new Error('Failed to send message');
+				}
+
 				this.success = true;
 				this.formData = {
 					name: '',
@@ -49,13 +102,17 @@ export default {
 				};
 			} catch (error) {
 				this.error = 'Failed to send message. Please try again.';
-				console.error('EmailJS error:', error);
+				console.error('Form submission error:', error);
 			} finally {
 				this.loading = false;
 			}
 		},
 		updateFormData(field, value) {
 			this.formData[field] = value;
+			// Clear error when user starts typing
+			if (this.formErrors[field]) {
+				this.formErrors[field] = '';
+			}
 		}
 	}
 };
@@ -78,6 +135,10 @@ export default {
 					:val="formData.name"
 					@update:val="updateFormData('name', $event)"
 				/>
+				<div v-if="formErrors.name" class="text-red-500 text-sm -mt-5">
+					{{ formErrors.name }}
+				</div>
+
 				<FormInput
 					label="Email"
 					inputIdentifier="email"
@@ -85,22 +146,33 @@ export default {
 					:val="formData.email"
 					@update:val="updateFormData('email', $event)"
 				/>
+				<div v-if="formErrors.email" class="text-red-500 text-sm -mt-5">
+					{{ formErrors.email }}
+				</div>
+
 				<FormInput 
 					label="Subject" 
 					inputIdentifier="subject"
 					:val="formData.subject"
 					@update:val="updateFormData('subject', $event)"
 				/>
+				<div v-if="formErrors.subject" class="text-red-500 text-sm -mt-5">
+					{{ formErrors.subject }}
+				</div>
+
 				<FormTextarea 
 					label="Message" 
 					textareaIdentifier="message"
 					:val="formData.message"
 					@update:val="updateFormData('message', $event)"
 				/>
+				<div v-if="formErrors.message" class="text-red-500 text-sm -mt-5">
+					{{ formErrors.message }}
+				</div>
 
 				<!-- Success Message -->
 				<div v-if="success" class="text-green-500 mb-4">
-					Message sent successfully!
+					Message sent successfully! We'll get back to you soon.
 				</div>
 
 				<!-- Error Message -->
