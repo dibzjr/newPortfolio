@@ -13,12 +13,12 @@ export default {
 			contacts: [
 				{
 					id: 1,
-					name: 'Your Address, Your City, Your Country',
+					name: 'Your Address, Nairobi, Kenya',
 					icon: 'map-pin',
 				},
 				{
 					id: 2,
-					name: 'email@domain.com',
+					name: 'mudiborogers@gmail.com',
 					icon: 'mail',
 				},
 				{
