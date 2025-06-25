@@ -32,15 +32,16 @@ export default {
 					>
 						<span>{{ info.title }}: </span>
 						<a
-							href="#"
-							:class="
-								info.title == 'Website' || info.title == 'Phone'
-									? 'hover:underline cursor-pointer'
-									: ''
-							"
+							v-if="info.title === 'Website' || info.title === 'Project Link'"
+							:href="info.details"
+							target="_blank"
+							rel="noopener noreferrer"
+							class="hover:underline cursor-pointer text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
 							aria-label="Project Website and Phone"
-							>{{ info.details }}</a
 						>
+							{{ info.details }}
+						</a>
+						<span v-else>{{ info.details }}</span>
 					</li>
 				</ul>
 			</div>
@@ -74,7 +75,7 @@ export default {
 			</div>
 
 			<!-- Single project social sharing -->
-			<div>
+			<div v-if="projectInfo.socialSharingsHeading">
 				<p
 					class="font-general-medium text-2xl text-ternary-dark dark:text-ternary-light mb-2"
 				>

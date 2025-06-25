@@ -16,8 +16,8 @@ export default {
 	data: () => {
 		return {
 			singleProjectHeader: {
-				singleProjectTitle: 'Group Accounts',
-				singleProjectDate: 'Jul 26, 2024',
+				singleProjectTitle: 'Merchant Portal',
+				singleProjectDate: 'Feb 26, 2025',
 				singleProjectTag: 'UI / Frontend',
 			},
 			projectImages: [
@@ -141,9 +141,9 @@ export default {
 				relatedProjects: [
 					{
 						id: 1,
-						title: 'Merchant Portal',
-						img: require('@/assets/images/web-project-1.jpg'),
-						route: '/projects/merchant-project'
+						title: 'Group Accounts',
+						img: require('@/assets/images/web-project-2.jpg'),
+						route: '/projects/single-project'
 					},
 					// {
 					// 	id: 2,

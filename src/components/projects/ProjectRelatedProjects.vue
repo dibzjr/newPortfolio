@@ -15,13 +15,20 @@ export default {
 		</p>
 
 		<div class="grid grid-cols-1 sm:grid-cols-4 gap-10">
-			<div v-for="item in relatedProject.relatedProjects" :key="item.id">
+			<router-link 
+				v-for="item in relatedProject.relatedProjects" 
+				:key="item.id"
+				:to="item.route"
+				class="block"
+			>
 				<img
 					:src="item.img"
-					class="rounded-xl cursor-pointer"
+					class="rounded-xl cursor-pointer hover:opacity-80 transition-opacity duration-300"
 					:alt="item.title"
 				/>
-			</div>
+			</router-link>
 		</div>
 	</div>
 </template>
+
+<style lang="scss" scoped></style>
