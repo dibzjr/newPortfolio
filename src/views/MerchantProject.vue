@@ -58,7 +58,7 @@ export default {
 					{
 						id: 4,
 						title: 'Project Link',
-						details: 'https://liteportal-uat.directpay.online',
+						details: 'https://f2f-portal.dpodev.biz',
 					},
 				],
 				objectivesHeading: 'Objective',
@@ -76,6 +76,10 @@ export default {
 							'TailwindCSS',
 							'PHP',
 							'MSSQL',
+							'MySql',
+							'Golang',
+							'Lambda',
+							'High Charts'
 						],
 					},
 				],
@@ -84,13 +88,13 @@ export default {
 					{
 						id: 1,
 						details:
-							'The project entails creating/nominating a parent company and assigning sub-accounts(Child Accounts) to be managed by the parent company. The relationship is created on a different application and fed data fed through APIs to the vue js site. ',
+							'The project entails creating a visually appealing Merchant Portal with functionalities such as transaction creation and direct charging using cards and mobile, report fetching, data visualization using high charts js showcasing data such as sales, settlements, POS transactions e.t.c. ',
 					},
-					{
-						id: 2,
-						details:
-							'With this relationship, the parent company is able to perform specific actions on behalf of the child account such as transaction creation, refunds, view details of child accounts such as balances e.t.c',
-					},
+					// {
+					// 	id: 2,
+					// 	details:
+					// 		'With this relationship, the parent company is able to perform specific actions on behalf of the child account such as transaction creation, refunds, view details of child accounts such as balances e.t.c',
+					// },
 					// {
 					// 	id: 3,
 					// 	details:
