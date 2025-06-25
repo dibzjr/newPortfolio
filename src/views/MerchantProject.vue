@@ -63,7 +63,7 @@ export default {
 				],
 				objectivesHeading: 'Objective',
 				objectivesDetails:
-					'Enable Single Sign On for nominated DPO Group merchants',
+					'Migrate Merchants to a visually appealing Lite Version of the Merchant Portal',
 				technologies: [
 					{
 						title: 'Tools & Technologies',
