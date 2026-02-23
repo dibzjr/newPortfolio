@@ -13,7 +13,7 @@ export default {
 			contacts: [
 				{
 					id: 1,
-					name: 'Your Address, Nairobi, Kenya',
+					name: 'Nairobi, Kenya',
 					icon: 'map-pin',
 				},
 				{
